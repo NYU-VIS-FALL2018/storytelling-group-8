@@ -3,7 +3,7 @@
 
 Group 8 (Online: Group 4) 
 
-![Screenhot](screenshot.jpg)
+![Screenhot](climate+change+MGN+graphic.jpg)
 
 
 ## About
