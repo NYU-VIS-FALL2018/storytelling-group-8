@@ -188,7 +188,6 @@
             .enter()
             .append("circle")
             .attr("cx", function(d) {
-                console.log(d);
                 return projection([d['Longitude'],d['Latitude']])[0];
             })
             .attr("cy", function(d) {
