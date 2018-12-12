@@ -50,6 +50,24 @@
             border-radius: 8px;         
             pointer-events: none;           
         }
+         * {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
     </style>
 </head>
@@ -62,22 +80,19 @@
   <h4>But is the planet <b>really</b> warming up?</h4>
   <p>Lets see what the facts have to say and try to analyse how the world's temperatures are shifting over the years on a day to day basis</p>
 </div>
-
-
-  <div>
-  <p id="years"></p>
+     
+<div class="row">
+  <div class="column" style="background-color:#aaa;">
+ <p id="years"></p>
 <p id="report"></p>
 <div id="map"></div>
 <div id="slider"></div>
-
- 
-  <div id='right-half'>
+  </div>
+  <div class="column" style="background-color:#bbb;">
+    <h2>Column 2</h2>
     <p>Climate change & global warming is one of the most debated political topics today. Some say climate change is the biggest threat of our age while others say it's a myth based on dodgy science. </p>
   </div>
-
 </div>
-
-
 <script>
     var width = 960,
         height = 580,
