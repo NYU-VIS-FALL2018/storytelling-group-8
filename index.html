@@ -476,6 +476,234 @@ $.getJSON(ajaxUrl, function(data) {
 </script>
 <div id='root'></div>
 <div id="container" style="margin: 20px;"></div>
+
+
+<script>
+    var width = 960,
+    height = 580,
+    margin = {
+        top: 10,
+        bottom: 100,
+        left:100,
+        right: 10
+    };
+
+    var t = d3.transition()
+        .duration(750);
+
+    var color = d3.scale.category10();
+
+    var projection = d3.geo.kavrayskiy7()
+        .scale(170)
+        .translate([width / 2, height / 2])
+        .precision(.1);
+
+    var path = d3.geo.path()
+        .projection(projection);
+
+
+    var svg = d3.select("#container").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("margin", "0 auto")
+        .style("display", "block")
+        .style("overflow", "visible");
+
+    var svgChart = d3.select("#container").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .style("margin", "0 auto")
+        .style("display", "block")
+        .style("overflow", "visible");
+
+//    Draw x-axis and x-axis label
+    svgChart.append("g")
+        .attr("id", "xaxisticks")
+        .attr("transform", `translate(${0}, ${height - margin.bottom})`);
+
+    svgChart.append("text")
+        .attr("transform",
+            `translate(${width / 2}, ${height - (margin.bottom / 2)})`)
+        .text("Year");
+
+//    Draw y-axis and y-axis label
+    svgChart.append("g")
+        .attr("id", "yaxisticks")
+        .attr("transform", `translate(${margin.left}, ${0})`);
+
+    svgChart.append("text")
+        .attr("transform",
+            `translate(${margin.left / 2}, ${height / 2}) rotate(-90)`)
+        .text("Average Temperature (C)");
+
+    svgChart.append("path")
+        .attr("id", "tempLine")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 1.5);
+
+    svg.append("defs").append("path")
+        .datum({type: "Sphere"})
+        .attr("id", "sphere")
+        .attr("d", path);
+
+    svg.append("use")
+        .attr("class", "stroke")
+        .attr("xlink:href", "#sphere");
+
+    svg.append("use")
+        .attr("class", "fill")
+        .attr("xlink:href", "#sphere");
+
+
+//    Draw map
+    d3.json("https://unpkg.com/world-atlas@1/world/50m.json", function(error, world) {
+        if (error) throw error;
+
+        var countries = topojson.feature(world, world.objects.countries).features;
+
+        svg.selectAll(".country")
+            .data(countries)
+            .enter().insert("path", ".graticule")
+            .attr("class", "country")
+            .attr("d", path)
+            .style("fill","#D3D3D3");
+
+        svg.insert("path", ".graticule")
+            .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
+            .attr("class", "boundary")
+            .attr("d", path);
+    });
+
+    var dataNames = ["data_avg"];
+
+    var div = d3.select("body")
+            .append("div")   
+            .attr("class", "tooltip")               
+            .style("opacity", 0);
+
+    for (var i = 0; i < dataNames.length; i++) {
+        d3.json("cleaned_climate_data/" + dataNames[i] + ".json", function(error,dataSet) {
+            drawCircles(error, dataSet);
+        });
+    }
+    function drawCircles(error, dataSet){
+        if (error) throw error;
+        svg.selectAll("circle")
+            .data(dataSet)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d) {
+                return projection([d['Longitude'],d['Latitude']])[0];
+            })
+            .attr("cy", function(d) {
+                return projection([d['Longitude'],d['Latitude']])[1];
+            })
+            .attr("r", 2)
+            .attr("color", "black")
+            .on("mouseover", function(d) {      
+            div.transition()        
+               .duration(200)      
+               .style("opacity", .9);      
+                div.html("<b>" +d["City"] + "<b><br> Country: <br>"+ d["Country"] )
+               .style("left", (d3.event.pageX) + "px")     
+               .style("top", (d3.event.pageY - 28) + "px");    
+            })
+            .on("mouseout", function(d) {       
+            div.transition()        
+               .duration(500)      
+               .style("opacity", 0);   
+            })
+
+            .on("click", function(d) {
+                var dict = d["Years"];
+                var arr = [];
+                Object.keys(dict).forEach(function(key) {
+                    arr.push({"year": key, "average_temp": dict[key]});
+                });
+                var x_range = d3.extent(arr, function(d) { return +d["year"]});
+                var y_range = d3.extent(arr, function(d) { return d["average_temp"]});
+                var x = d3.scaleLinear()
+                    .domain(x_range)
+                    .range([margin.left, width - margin.right]);
+
+                var y = d3.scaleLinear()
+                    .domain(y_range)
+                    .range([height - margin.bottom, margin.top]);
+
+                var line = d3.line()
+                            .x(function(d) {return x(d["year"]);})
+                            .y(function(d) {return y(d["average_temp"]);});
+
+                svgChart.select("#tempLine")
+                    .datum(arr)
+                    .transition()
+                    .duration(1000)
+                    .attr("d", line);
+
+                var circles = svgChart.selectAll("circle")
+                    .data(arr, function(d) { return d["year"];});
+
+                circles
+                    .exit()
+                    .transition(t)
+                    .duration(1000)
+                    .attr("cy", function(d) { return y(d["average_temp"]) + 100; })
+                    .attr("color", "blue")
+                    .style("fill-opacity", 1e-6)
+                    .remove();
+
+                circles
+                    .transition(t)
+                    .duration(1000)
+                    .attr("cx", function(d) {return x(d["year"]);})
+                    .attr("cy", function(d) {return y(d["average_temp"]);});
+                
+                circles
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function(d) {return x(d["year"]);})
+                    .attr("cy", function(d) {return y(d["average_temp"]);})
+                    .attr("r", 4)
+                    .on("mouseover", function(d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .attr("r", 8);
+                        svgChart.append("text")
+                            .attr("id", "data_point_text")
+                            .attr("transform",
+                                `translate(${x(d["year"])}, ${y(d["average_temp"])})`)
+                            .text("Year: " + d["year"]  + "\nTemperature: " + d["average_temp"]);
+                    })
+                    .on("mouseout", function(d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(50)
+                            .attr("r", 4);
+                        svgChart.select("#data_point_text")
+                            .transition()
+                            .duration(800)
+                            .remove();
+                    });
+
+                svgChart.select("#yaxisticks")
+                    .transition()
+                    .duration(1000)
+                    .call(d3.axisLeft(y).ticks(5));
+
+                svgChart.select("#xaxisticks")
+                    .transition()
+                    .duration(1000)
+                    .call(d3.axisBottom(x).ticks(5));
+                });
+    }
+
+    d3.select(self.frameElement).style("height", height + "px");
+</script>
+
 <div id='nasa'>
   <p><b>"The earth has warmed since 1880.</b>Signs that the Earth is warming are recorded all over the globe. The easiest way to see increasing temperatures is through the thermometer records kept over the past century and a half. Around the world, the Earth's average temperature has risen more than 0.8 degrees Celsius over the last century, and about twice that in parts of the Arctic. Most of the warming occurred in the past 35 years, with 15 of the 16 warmest years on record occurring since 2001. <br /> The year 2015 was the first time the global average temperatures were 1 degree Celsius or more above the 1880-1899 average. <br /> Even though the 2000s witnessed a solar output decline resulting in an unusually deep solar minimum in 2007-2009, <br /><b>surface temperatures continue to increase."</b><br /> <a href='http://climate.nasa.gov/evidence/' target='_blank'>NASA</a></p>
 </div>
