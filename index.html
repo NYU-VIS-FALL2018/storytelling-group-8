@@ -65,7 +65,7 @@
      
 
  <p style="padding-left: 600px" id="years"></p>
- <div style="padding-left: 150px" id="slider"></div>
+ <div style="padding-left: 350px" id="slider"></div>
 <div style="padding-left: 150px" id="map"></div>
 
  
@@ -762,7 +762,7 @@ $.getJSON(ajaxUrl, function(data) {
                 });
     var element = document.getElementById("slider").children[1];
     console.log(element)
-    element.style.width = "800px";
+    element.style.width = "550px";
 
 function updateYear(sliderYear){
     d3.select("#years").text(function() {
