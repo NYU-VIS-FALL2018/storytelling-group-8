@@ -2,8 +2,8 @@
 <html>
 
 <head>
-	 <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css'>
-	<link rel="stylesheet" href="style.css">
+     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css'>
+    <link rel="stylesheet" href="style.css">
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="//d3js.org/d3.v4.min.js"></script>
     <script src="//d3js.org/d3.geo.projection.v0.min.js"></script>
@@ -61,11 +61,6 @@
   <h4>But is the planet <b>really</b> warming up?</h4>
   <p>Lets see what the facts have to say and try to analyse how the world's temperatures are shifting over the years on a day to day basis</p>
 </div>
-<select id="inds">
-        <option value="1" selected="selected">January</option>
-        <option value="2">Febraury</option>
-        <option value="3">March</option>
-</select>
 <div id="container" style="margin: 20px;"></div>
 <script>
     var width = 960,
@@ -166,7 +161,7 @@
             .attr("d", path);
     });
 
-    var dataNames = ["data"];
+    var dataNames = ["data_avg"];
 
     var div = d3.select("body")
             .append("div")   
@@ -297,7 +292,7 @@
     }
 
     d3.select(self.frameElement).style("height", height + "px");
-	
+    
 //URL for data to be pulled from, define arrays and variables to be used 
 var ajaxUrl = 'https://raw.githubusercontent.com/NYU-VIS-FALL2018/storytelling-group-8/master/global-temperature.json',
     mydata, yearsArray = [], yearStringArray = [], tempArray = [];
