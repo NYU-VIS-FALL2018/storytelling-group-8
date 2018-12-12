@@ -173,12 +173,7 @@
             drawCircles(error, dataSet);
         });
     }
-
-    // d3.select('#inds')
-    //     .on("change", function () {
-    //         var m = document.getElementById("inds");
-
-    function drawCircles(error, dataSet) {
+    function drawCircles(error, dataSet){
         if (error) throw error;
         svg.selectAll("circle")
             .data(dataSet)
@@ -197,7 +192,6 @@
                .duration(200)      
                .style("opacity", .9);      
                 div.html("<b>" +d["City"] + "<b><br> Country: <br>"+ d["Country"] )
-                    // + "<br> Received : <br>"+ d3.format(",")(d.Received))
                .style("left", (d3.event.pageX) + "px")     
                .style("top", (d3.event.pageY - 28) + "px");    
             })
@@ -206,19 +200,19 @@
                .duration(500)      
                .style("opacity", 0);   
             })
+
             .on("click", function(d) {
-                var dict = d["Month"]["1"];
+                var dict = d["Years"];
                 var arr = [];
                 Object.keys(dict).forEach(function(key) {
                     arr.push({"year": key, "average_temp": dict[key]});
                 });
-
                 var x_range = d3.extent(arr, function(d) { return +d["year"]});
                 var y_range = d3.extent(arr, function(d) { return d["average_temp"]});
-
                 var x = d3.scaleLinear()
                     .domain(x_range)
                     .range([margin.left, width - margin.right]);
+
                 var y = d3.scaleLinear()
                     .domain(y_range)
                     .range([height - margin.bottom, margin.top]);
@@ -260,7 +254,7 @@
                     .on("mouseover", function(d) {
                         d3.select(this)
                             .transition()
-                            .duration(800)
+                            .duration(200)
                             .attr("r", 8);
                         svgChart.append("text")
                             .attr("id", "data_point_text")
@@ -271,7 +265,7 @@
                     .on("mouseout", function(d) {
                         d3.select(this)
                             .transition()
-                            .duration(800)
+                            .duration(50)
                             .attr("r", 4);
                         svgChart.select("#data_point_text")
                             .transition()
@@ -288,7 +282,7 @@
                     .transition()
                     .duration(1000)
                     .call(d3.axisBottom(x).ticks(5));
-            });
+                });
     }
 
     d3.select(self.frameElement).style("height", height + "px");
