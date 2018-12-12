@@ -12,6 +12,8 @@
 
         body {
             background: #fcfcfa;
+            font-family: Helvetica, Arial, sans-serif;
+
         }
 
         .chartCircle {
@@ -61,6 +63,10 @@
   <h4>But is the planet <b>really</b> warming up?</h4>
   <p>Lets see what the facts have to say and try to analyse how the world's temperatures are shifting over the years on a day to day basis</p>
 </div>
+<p id="years"></p>
+<p id="report"></p>
+<div id="map"></div>
+<div id="slider"></div>
 <div id="container" style="margin: 20px;"></div>
 <script>
     var width = 960,
@@ -494,4 +500,151 @@ $.getJSON(ajaxUrl, function(data) {
 <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.min.js'></script>
 <script src="index.js"></script>
 </body>
+<script type="text/javascript">
+    
+    var sliderYear = 1743
+    update();
+
+    var div = d3.select("body")
+        .append("div")   
+        .attr("class", "tooltip")               
+        .style("opacity", 0);
+
+    var svg1 = d3.select("#slider")
+
+     d3.select("#slider").append("svg1")
+    .attr("width", 500)
+    .attr("height", 100)
+    
+    svg1.append("input")
+                .attr("type", "range")
+                .attr("min", 1743)
+                .attr("max", 2013)
+                .attr("step", "1")
+                .attr("id", "year")
+                .on("input", function input() {
+                    sliderYear = document.getElementById("year").value;
+                    updateYear(sliderYear);
+                    update();
+                });
+    var element = document.getElementById("slider").children[1];
+    console.log(element)
+    element.style.width = "800px";
+
+function updateYear(sliderYear){
+    d3.select("#years").text(function() {
+                return "Year: " + sliderYear;
+            });
+    console.log(sliderYear)
+}
+
+function update(){
+
+        var h = 450,
+            w = 960;
+
+    // set-up unit projection and path
+    var projection = d3.geoMercator()
+            .scale(0.8)
+            .translate([0, -1]);
+
+    var path = d3.geoPath()
+            .projection(projection);
+
+    // set-up svg canvas
+    var color = d3.scaleLinear()
+            .range(["blue", "red"]);
+    var showValue= "TempChange";
+    var record=[];
+
+    var linear = d3.scaleLinear()
+            .range(["blue", "red"]);
+
+    function addRecord(d){
+        d[showValue]=+d[showValue];
+        var obj = {key: d.countries, value: d[showValue]};
+        if(d.year == 1800){
+            record.push(obj);
+        }   
+        return d;
+
+    }
+    d3.json("countries.topo.json", function(error, data) {
+ 
+        d3.csv("ByCountry.csv", function(error,data2){
+            data2 = data2.filter(function(d) {return d.Year == sliderYear;})
+            color.domain(d3.extent(data, function(d){
+                return d[showValue];
+            }));
+            linear.domain(d3.extent(data, function(d){
+                return d[showValue];
+            }));
+        
+        d3.csv("idCountry.csv", function(error, csv) {
+            var world = data.features;
+
+            csv.forEach(function(d, i) {
+                world.forEach(function(e, j) {
+                    if (d.id === e.id) {
+                        e.name = d.name
+                    }
+                })
+            })
+            var b = path.bounds(data),
+                    s = .95 / Math.max((b[1][0] - b[0][0]) / w, (b[1][1] - b[0][1]) / h),
+                    t = [(w - s * (b[1][0] + b[0][0])) / 2, (h - s * (b[1][1] + b[0][1])) / 2];
+
+            projection.scale(s)
+                    .translate(t);
+
+            var colorScale = d3.scaleSequential(d3.interpolateHclLong("blue","red")).domain([-18, 6])
+
+            var element = document.getElementById("map");
+            if (element.firstChild !=   null)
+            element.removeChild(element.firstChild);
+            
+            var svg = d3.select("#map").append("svg")
+            .attr("height", h)
+            .attr("width", w);
+
+            svg.selectAll("path")
+                    .data(world).enter()
+                    .append("path")
+                    .style("fill", function(d){
+                        
+                        var temp = data2.filter(function(e) {return e.Country == d.name;})
+                        if(temp.length == 0)
+                            return "transparent"
+                        
+                        return colorScale(temp[0].TempChange);
+
+                    })
+                    .style("stroke", "grey")
+                    .style("stroke-width", "1px")
+                    .attr("d", path)
+                    .on("mouseover", function(d) {
+                        var value = "Not known";
+                        var temp = data2.filter(function(e) {return e.Country == d.name;})
+
+                        if(temp.length!=0)
+                            if(!isNaN(temp[0].TempChange))
+                                value = Math.round(temp[0].TempChange*100)/100 + "&#8451;";
+
+                        div.transition()        
+                           .duration(200)      
+                           .style("opacity", .9);      
+
+                        div.html("<b>" +d.name + "<b><br> Year: "+ sliderYear+ "<br> Temp Change: <br>"+ value)
+                           .style("left", (d3.event.pageX) + "px")     
+                           .style("top", (d3.event.pageY - 90) + "px");    
+                    })
+                    .on("mouseout", function(d) {       
+                        div.transition()        
+                           .duration(500)      
+                           .style("opacity", 0);   
+                    });
+        });
+        });
+    })}
+</script>
 </html>
