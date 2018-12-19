@@ -71,10 +71,15 @@ This doesn’t mean that temperatures haven't fluctuated among regions of the gl
      
 </div>
  <p style="padding-left: 600px" id="years"></p>
- <div style="padding-left: 350px" id="slider"></div>
+ <div style="display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;">
+ <div  id="slider"></div>
 
-<div style="padding-left: 150px" id="map"></div>
- 
+<div  id="map"></div>
+ </div>
 
 
  <div id='nasa'>
@@ -496,7 +501,8 @@ $.getJSON(ajaxUrl, function(data) {
 
 <div id='nasa'>
   <p><b>It may sound small, but a half-degree of temperature change could lead to more dire consequences in a warming world. As the world warms because of human-induced climate change, most of us can expect to see more days when temperatures hit 90 degrees Fahrenheit (32 degrees Celsius) or higher.</b><br /> </p>
- 
+ <br>
+ <br>
   <h4>See how your <b>hometown</b> has changed so far.</h4>
 </div>
 
@@ -736,7 +742,7 @@ $.getJSON(ajaxUrl, function(data) {
 </div>
 
 <div id='space'>
-<div id='part-2'>
+<!-- <div id='part-2'> -->
   <div id='left-half'>
     <h2>You can make a difference</h2>
   </div>
