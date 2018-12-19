@@ -130,15 +130,7 @@ This doesn’t mean that temperatures haven't fluctuated among regions of the gl
         .attr("id", "yaxisticks")
         .attr("transform", `translate(${margin.left}, ${0})`);
 
-    svgChart.append("text")
-        .attr("transform",
-            `translate(${margin.left / 2}, ${height / 2}) rotate(-90)`)
-        .text("Average Temperature (C)");
-
-    svgChart.append("text")
-        .attr("transform",
-            `translate(${width / 2}, ${height - (margin.bottom / 2)})`)
-        .text("Year");
+    
 
     svgChart.append("path")
         .attr("id", "tempLine")
@@ -302,7 +294,17 @@ This doesn’t mean that temperatures haven't fluctuated among regions of the gl
                     .transition()
                     .duration(1000)
                     .call(d3.axisBottom(x).ticks(5));
-                });
+
+                svgChart.append("text")
+                    .attr("transform",
+                        `translate(${margin.left / 2}, ${height / 2}) rotate(-90)`)
+                    .text("Average Temperature (C)");
+
+                svgChart.append("text")
+                    .attr("transform",
+                        `translate(${width / 2}, ${height - (margin.bottom / 2)})`)
+                    .text("Year");
+                            });
     }
 
     d3.select(self.frameElement).style("height", height + "px");
