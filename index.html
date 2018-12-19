@@ -57,20 +57,22 @@
 <body>
     <script src="https://use.fontawesome.com/da4fda81b5.js"></script> 
 <div style="height:200 px" id='nasas'>
-<h1 style="color: black" id='title'>Climate Change is not FAKE news</h1>
-<div id='graph-explain'>
-  <p>Climate change & global warming is one of the most debated political topics today. Some say climate change is the biggest threat of our age while others say it's a myth based on dodgy science. </p>
-  <h4>But is the planet <b>really</b> warming up?</h4>
-  <p>Lets see what the facts have to say and try to analyse how the world's temperatures are shifting over the years on a day to day basis</p>
-<p>Consider the country Kazakhstan here:
-The base temperature for Kazakhstan is considered as 3.75℃ (average) from the year 1812.
-In comparison to this, the temperature change in the year 1900 was only 0.73℃. However, the difference rose to 5.2℃ in 2013, which means the average temperature in 2013 was 8.95℃.
-This doesn’t mean that temperatures haven't fluctuated among regions of the globe or between seasons and times of day. But if you average out the temperature all over the world over the course of a year, you see that temperatures have been creeping upward.
-     </p>
-     </div>
+<h1 style="color: black" id='title'><u>Climate Change is <span style="color: red">NOT</span> fake news</u></h1>
+<div id='graph-explain' style="font-size: 1.3em">
+    <p>Climate Change and Global Warming are one of the most debated political topics today.</p> 
+    <p>Some say climate change is the biggest threat of our age while others say it's a myth based on dodgy science. </p>
+    <h4>But is the planet <b>really</b> warming up?</h4>
+    <p>Let's see what the data says and try to analyse how the world's temperatures are shifting over the years on a day to day basis</p>
+    <p>For instance, the average temperature of Kazakhstan in the year 1812 was 3.75&#8451;.
+        In comparison to this, the temperature in the year 1900 was 4.48&#8451;, which is a rise of 0.75&#8451; over 88 years. However, the difference rose to more than 5.2&#8451; in 2013, when the recorded temperature was 8.95&#8451;.</p>
+</div>
      
 </div>
- <p style="padding-left: 600px" id="years"></p>
+ <p style="display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;" id="years"></p>
  <div style="display: flex;
     justify-content: center;
     flex-direction: column;
@@ -83,7 +85,7 @@ This doesn’t mean that temperatures haven't fluctuated among regions of the gl
 
 
  <div id='nasa'>
-  <p><b>The current warming trend is of particular significance because most of it is extremely likely (greater than 95 percent probability) to be the result of human activity since the mid-20th century and proceeding at a rate that is unprecedented over decades to millennia.</b><br /> </p>
+  <p><b>The current warming trend is of particular significance because most of it is extremely likely (greater than 95 percent probability) to be the result of human activity since the start of 20th century and proceeding at a rate that is unprecedented over decades to millennia.</b><br /> </p>
 
 <p><b>Earth-orbiting satellites and other technological advances have enabled scientists to see the big picture, collecting many different types of information about our planet and its climate on a global scale. This body of data, collected over many years, reveals the signals of a changing climate.</b><br /> </p>
 </div>
@@ -286,7 +288,7 @@ This doesn’t mean that temperatures haven't fluctuated among regions of the gl
                             .attr("r", 4);
                         svgChart.select("#data_point_text")
                             .transition()
-                            .duration(800)
+                            .duration(500)
                             .remove();
                     });
 
@@ -634,7 +636,7 @@ $.getJSON(ajaxUrl, function(data) {
             div.transition()        
                .duration(200)      
                .style("opacity", .9);      
-                div.html("<b>" +d["City"] + "<b><br> Country: <br>"+ d["Country"] )
+                div.html("<b>" +d["City"] + "<b><br> Country: <br>"+ d["Country"]+"<br><br><i>Click for details</i><br>" )
                .style("left", (d3.event.pageX) + "px")     
                .style("top", (d3.event.pageY - 28) + "px");    
             })
@@ -693,27 +695,36 @@ $.getJSON(ajaxUrl, function(data) {
                     .append("circle")
                     .attr("cx", function(d) {return x(d["year"]);})
                     .attr("cy", function(d) {return y(d["average_temp"]);})
-                    .attr("r", 4)
+                    .attr("r", 3)
                     .on("mouseover", function(d) {
-                        d3.select(this)
-                            .transition()
-                            .duration(200)
-                            .attr("r", 8);
-                        svgChart.append("text")
-                            .attr("id", "data_point_text")
-                            .attr("transform",
-                                `translate(${x(d["year"])}, ${y(d["average_temp"])})`)
-                            .text("Year: " + d["year"]  + "\nTemperature: " + d["average_temp"]);
+                        // d3.select(this)
+                        //     .transition()
+                        //     .duration(200)
+                        //     .attr("r", 10);
+                        // svgChart.append("text")
+                        //     .attr("id", "data_point_text")
+                        //     .attr("transform",
+                        //         `translate(${x(d["year"])}, ${y(d["average_temp"])})`)
+                        //     .text("Year: " + d["year"]  + "\nTemperature: " + d["average_temp"]);
+                        div.transition()        
+                           .duration(200)      
+                           .style("opacity", .9);      
+                        div.html("<br>Year: " + d["year"] + "\n\nTemperature: " + Math.round(d["average_temp"]*100)/100 + "&#8451;")
+                           .style("left", (d3.event.pageX) + "px")     
+                           .style("top", (d3.event.pageY - 28) + "px"); 
                     })
                     .on("mouseout", function(d) {
-                        d3.select(this)
-                            .transition()
-                            .duration(50)
-                            .attr("r", 4);
-                        svgChart.select("#data_point_text")
-                            .transition()
-                            .duration(800)
-                            .remove();
+                        div.transition()        
+                           .duration(500)      
+                           .style("opacity", 0);   
+                        // d3.select(this)
+                        //     .transition()
+                        //     .duration(200)
+                        //     .attr("r", 8);
+                        // svgChart.select("#data_point_text")
+                        //     // .transition()
+                        //     // .duration(100)
+                        //     .remove();
                     });
 
                 svgChart.select("#yaxisticks")
@@ -738,7 +749,7 @@ $.getJSON(ajaxUrl, function(data) {
 </script>
 
 <div id='nasa'>
-  <p><b>"The earth has warmed since 1880.</b>Signs that the Earth is warming are recorded all over the globe. The easiest way to see increasing temperatures is through the thermometer records kept over the past century and a half. Around the world, the Earth's average temperature has risen more than 0.8 degrees Celsius over the last century, and about twice that in parts of the Arctic. Most of the warming occurred in the past 35 years, with 15 of the 16 warmest years on record occurring since 2001. <br /> The year 2015 was the first time the global average temperatures were 1 degree Celsius or more above the 1880-1899 average. <br /> Even though the 2000s witnessed a solar output decline resulting in an unusually deep solar minimum in 2007-2009, <br /><b>surface temperatures continue to increase."</b><br /> <a href='http://climate.nasa.gov/evidence/' target='_blank'>NASA</a></p>
+  <p><b>"The earth has warmed since 1880.</b> Signs that the Earth is warming are recorded all over the globe. The easiest way to see increasing temperatures is through the thermometer records kept over the past century and a half. Around the world, the Earth's average temperature has risen more than 0.8 degrees Celsius over the last century, and about twice that in parts of the Arctic. Most of the warming occurred in the past 35 years, with 15 of the 16 warmest years on record occurring since 2001. The year 2015 was the first time the global average temperatures were 1 degree Celsius or more above the 1880-1899 average. Even though the 2000s witnessed a solar output decline resulting in an unusually deep solar minimum in 2007-2009, surface temperatures continue to increase."<br><br>- <span style="font-size: 1.1em"><a href='http://climate.nasa.gov/evidence/' target='_blank'>NASA</a></span></p>
 </div>
 
 <div id='space'>

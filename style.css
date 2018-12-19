@@ -23,7 +23,7 @@ h2 {
   margin-bottom: 85px;
 }
 #graph-explain p, #graph-explain-bottom p {
-  font-size: 1.2em;
+  font-size: 1.3em;
   font-weight: lighter;
 }
 
@@ -67,7 +67,7 @@ h2 {
   color: black;
   width: 100%;
   display: block;
-  padding: 150px;
+  padding: 50px;
   margin: 0 auto;
   text-align: center;
 }
