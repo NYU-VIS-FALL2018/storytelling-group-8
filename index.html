@@ -551,11 +551,7 @@ $.getJSON(ajaxUrl, function(data) {
         .attr("id", "yaxisticks")
         .attr("transform", `translate(${margin.left}, ${0})`);
 
-    svgChart.append("text")
-        .attr("transform",
-            `translate(${margin.left / 2}, ${height / 2}) rotate(-90)`)
-        .text("Average Temperature (C)");
-
+    
     svgChart.append("path")
         .attr("id", "tempLine")
         .attr("fill", "none")
@@ -718,6 +714,12 @@ $.getJSON(ajaxUrl, function(data) {
                     .transition()
                     .duration(1000)
                     .call(d3.axisBottom(x).ticks(5));
+
+                svgChart.append("text")
+                    .attr("transform",
+                        `translate(${margin.left / 2}, ${height / 2}) rotate(-90)`)
+                    .text("Average Temperature (C)");
+
                 });
     }
 
