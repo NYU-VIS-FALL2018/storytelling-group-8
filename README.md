@@ -13,4 +13,4 @@ Some say climate change is the biggest threat of our age while others say it’s
 ## More
 [DEMO](https://nyu-vis-fall2018.github.io/storytelling-group-8/)
 
-[Project Description](project.pdf)
+[Project Description](Project_proposal.pdf)
